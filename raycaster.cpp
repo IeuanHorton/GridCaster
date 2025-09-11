@@ -5,6 +5,13 @@
 int const WINDOWWIDTH = 1024;
 int const WINDOWHEIGHT = 512;
 
+unsigned char const DOWN = 's';
+unsigned char const UP = 'w';
+unsigned char const LEFT = 'a';
+unsigned char const RIGHT = 'd';
+
+int const MOVESPEED = 5;
+
 float pX,pY; //Player Position
 	     
 void drawPlayer()
@@ -23,6 +30,31 @@ void display()
 	glutSwapBuffers();
 }
 
+void buttons(unsigned char key, int x, int y)
+{
+	if(key == UP)
+	{
+		pY-=MOVESPEED;
+	}
+
+	if(key == DOWN)
+	{
+		pY+=MOVESPEED;
+	}
+
+	if(key == LEFT)
+	{
+		pX-=MOVESPEED;
+	}
+
+	if(key == RIGHT)
+	{
+		pX+=MOVESPEED;
+	}
+
+	glutPostRedisplay();
+}
+
 void init()
 {
 	glClearColor(0.3,0.3,0.3,0);
@@ -39,5 +71,6 @@ int main(int argc, char* argv[])
 	glutCreateWindow("RAYCASTERTEST");
 	init();
 	glutDisplayFunc(display);
+        glutKeyboardFunc(buttons);
 	glutMainLoop();
 }
