@@ -4,6 +4,9 @@
 #include "player.h"
 #include "keybindings.h"
 #include "settings.h"
+#include "map.h"
+
+Map map;
 
 void drawPlayer()
 {
@@ -17,6 +20,7 @@ void drawPlayer()
 void display()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+map.draw2DMap();
 	drawPlayer();
 	glutSwapBuffers();
 }
@@ -50,7 +54,6 @@ void init()
 {
 	glClearColor(0.3,0.3,0.3,0);
 	gluOrtho2D(0,WINDOWWIDTH,WINDOWHEIGHT,0);
-
 	pX=300; pY=300;
 }
 
