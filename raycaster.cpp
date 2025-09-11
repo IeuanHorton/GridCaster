@@ -1,19 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <GL/glut.h>
+#include "player.h"
+#include "keybindings.h"
+#include "settings.h"
 
-int const WINDOWWIDTH = 1024;
-int const WINDOWHEIGHT = 512;
-
-unsigned char const DOWN = 's';
-unsigned char const UP = 'w';
-unsigned char const LEFT = 'a';
-unsigned char const RIGHT = 'd';
-
-int const MOVESPEED = 5;
-
-float pX,pY; //Player Position
-	     
 void drawPlayer()
 {
 	glColor3f(1,1,0); //Yellow
