@@ -1,10 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <GL/glut.h>
+#include <math.h>
+
 #include "player.h"
 #include "keybindings.h"
 #include "settings.h"
 #include "map.h"
+
+#define PI 3.1415926535
 
 Map map;
 
@@ -15,36 +19,54 @@ void drawPlayer()
 	glBegin(GL_POINTS);
 	glVertex2i(pX,pY);
 	glEnd();
+
+	glLineWidth(3);
+	glBegin(GL_LINES);
+	glVertex2i(pX,pY);
+	glVertex2i(pX+pDeltaX*5,pY+pDeltaY*5);
+	glEnd();
 }
 
 void display()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-map.draw2DMap();
+	map.draw2DMap();
 	drawPlayer();
 	glutSwapBuffers();
 }
 
 void buttons(unsigned char key, int x, int y)
 {
-	if(key == UP)
-	{
-		pY-=MOVESPEED;
-	}
-
-	if(key == DOWN)
-	{
-		pY+=MOVESPEED;
-	}
-
 	if(key == LEFT)
 	{
-		pX-=MOVESPEED;
+		pAngle -= 0.1;
+		if(pAngle < 0)
+		{
+			pAngle+=2*PI;
+		}
 	}
 
 	if(key == RIGHT)
 	{
-		pX+=MOVESPEED;
+		pAngle += 0.1;
+		if(pAngle > 2*PI)
+		{
+			pAngle+=2*PI;
+		}
+	}
+
+	pDeltaX=cos(pAngle)*5;
+	pDeltaY=sin(pAngle)*5;
+
+	if(key == UP)
+	{
+		pX += pDeltaX;
+		pY += pDeltaY;
+	}
+	if(key == DOWN)
+	{
+		pX -= pDeltaX;
+		pY -= pDeltaY;
 	}
 
 	glutPostRedisplay();
