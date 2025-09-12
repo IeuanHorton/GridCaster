@@ -39,20 +39,17 @@ void buttons(unsigned char key, int x, int y)
 {
 	if(key == LEFT)
 	{
-		pAngle -= 0.1;
-		if(pAngle < 0)
-		{
-			pAngle+=2*PI;
-		}
+		pAngle -= TURNSPEED;
 	}
 
 	if(key == RIGHT)
 	{
-		pAngle += 0.1;
-		if(pAngle > 2*PI)
-		{
-			pAngle+=2*PI;
-		}
+		pAngle += TURNSPEED;
+	}
+
+	if(pAngle > 2*PI || pAngle < 0)
+	{
+		pAngle+=2*PI;
 	}
 
 	pDeltaX=cos(pAngle)*5;
