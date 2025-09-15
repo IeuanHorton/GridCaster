@@ -74,6 +74,9 @@ void init()
 	glClearColor(0.3,0.3,0.3,0);
 	gluOrtho2D(0,WINDOWWIDTH,WINDOWHEIGHT,0);
 	pX=300; pY=300;
+
+	pDeltaX=cos(pAngle)*5;
+	pDeltaY=sin(pAngle)*5;
 }
 
 int main(int argc, char* argv[])
