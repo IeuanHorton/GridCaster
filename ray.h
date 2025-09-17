@@ -1,0 +1,1 @@
+float rayX, rayY, rayAngle;
