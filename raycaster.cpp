@@ -30,12 +30,62 @@ void drawPlayer()
 	glEnd();
 }
 
-void drawRays()
+void horizontalLineCheck()
 {
-	rayAngle = pAngle;
-	for(int ray = 0; ray < NUMOFRAYS; ray++;
+	int depthOfField, mapX, mapY, mapPosition;
+	float yOffset, xOffset;
+
+
+	depthOfField = 0;
+	float aTan = -1/tan(rayAngle);
+	if(rayAngle>PI)//Looking up
+	{
+		rayY = (((int)playerY>>6)<<6)-0.0001;
+		rayX = (playerY-rayY) * aTan+playerX;
+		yOffset = -64;
+		xOffset = -yOffset * aTan;
+	}
+	if(rayAngle<PI)//Looking down
+	{
+		rayY = (((int)playerY>>6)<<6)+64;
+		rayX = (playerY - rayY) * aTan+playerX;
+		yOffset = 64;
+		xOffset = -yOffset * aTan;
+	}
+	if(rayAngle == 0 || rayAngle == PI)
+	{
+		rayX = playerX;
+		rayY = playerY;
+		depthOfField = 8;
+	}
+	while(depthOfField<8)
+	{
+		mapX = (int)(rayX)>>6;
+		mapY = (int)(rayY)>>6;
+		mapPosition = mapY * mapXLimit + mapX;
+		if(mapPosition < mapX*mapY && map[mapPosition]==1)//Hit Wall
+		{
+		       depthOfField = 8;
+		}
+		else //No Wall, Checks the next appearing horizontal line
+		{
+			rayX += xOffset;
+			rayY += yOffset;
+			depthOfField++;
+		}
+	}
 }
 
+
+void drawRays()
+{
+	
+	rayAngle = playerAngle;
+	for(int ray = 0; ray < NUMOFRAYS; ray++)
+	{
+		horizontalLineCheck();
+	}
+}
 void display()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
