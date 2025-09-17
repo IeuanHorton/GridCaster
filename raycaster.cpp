@@ -20,13 +20,13 @@ void drawPlayer()
 	glColor3f(1,1,0); //Yellow
 	glPointSize(8);
 	glBegin(GL_POINTS);
-	glVertex2i(pX,pY);
+	glVertex2i(playerX,playerY);
 	glEnd();
 
 	glLineWidth(3);
 	glBegin(GL_LINES);
-	glVertex2i(pX,pY);
-	glVertex2i(pX+pDeltaX*5,pY+pDeltaY*5);
+	glVertex2i(playerX,playerY);
+	glVertex2i(playerX+playerDeltaX*5,playerY+playerDeltaY*5);
 	glEnd();
 }
 
@@ -48,31 +48,31 @@ void buttons(unsigned char key, int x, int y)
 {
 	if(key == LEFT)
 	{
-		pAngle -= TURNSPEED;
+		playerAngle -= TURNSPEED;
 	}
 
 	if(key == RIGHT)
 	{
-		pAngle += TURNSPEED;
+		playerAngle += TURNSPEED;
 	}
 
-	if(pAngle > 2*PI || pAngle < 0)
+	if(playerAngle > 2*PI || playerAngle < 0)//Resets the angle is it goes over 360 or under 0
 	{
-		pAngle+=2*PI;
+		playerAngle+=2*PI;
 	}
 
-	pDeltaX=cos(pAngle)*5;
-	pDeltaY=sin(pAngle)*5;
+	playerDeltaX=cos(pAngle)*5;
+	playerDeltaY=sin(pAngle)*5;
 
 	if(key == UP)
 	{
-		pX += pDeltaX;
-		pY += pDeltaY;
+		playerX += playerDeltaX;
+		playerY += playerDeltaY;
 	}
 	if(key == DOWN)
 	{
-		pX -= pDeltaX;
-		pY -= pDeltaY;
+		playerX -= playerDeltaX;
+		playerY -= playerDeltaY;
 	}
 
 	glutPostRedisplay();
@@ -82,12 +82,12 @@ void init()
 {
 	glClearColor(0.3,0.3,0.3,0);
 	gluOrtho2D(0,WINDOWWIDTH,WINDOWHEIGHT,0);
-	pX=300; pY=300;
 
 	pDeltaX=cos(pAngle)*5;
 	pDeltaY=sin(pAngle)*5;
 
 	rayAngle = pAngle;
+	playerX=300; playerY=300;
 }
 
 int main(int argc, char* argv[])
