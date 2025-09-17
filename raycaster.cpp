@@ -62,8 +62,8 @@ void horizontalLineCheck()
 	{
 		mapX = (int)(rayX)>>6;
 		mapY = (int)(rayY)>>6;
-		mapPosition = mapY * mapXLimit + mapX;
-		if(mapPosition < mapX*mapY && map[mapPosition]==1)//Hit Wall
+		mapPosition = mapY * map.mapXLimit + mapX;
+		if(mapPosition < mapX*mapY && map.mapArray[mapPosition]==1)//Hit Wall
 		{
 		       depthOfField = 8;
 		}
@@ -111,8 +111,8 @@ void buttons(unsigned char key, int x, int y)
 		playerAngle+=2*PI;
 	}
 
-	playerDeltaX=cos(pAngle)*5;
-	playerDeltaY=sin(pAngle)*5;
+	playerDeltaX=cos(playerAngle)*5;
+	playerDeltaY=sin(playerAngle)*5;
 
 	if(key == UP)
 	{
@@ -133,10 +133,10 @@ void init()
 	glClearColor(0.3,0.3,0.3,0);
 	gluOrtho2D(0,WINDOWWIDTH,WINDOWHEIGHT,0);
 
-	pDeltaX=cos(pAngle)*5;
-	pDeltaY=sin(pAngle)*5;
+	playerDeltaX=cos(playerAngle)*5;
+	playerDeltaY=sin(playerAngle)*5;
 
-	rayAngle = pAngle;
+	rayAngle = playerAngle;
 	playerX=300; playerY=300;
 }
 

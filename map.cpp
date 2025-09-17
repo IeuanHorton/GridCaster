@@ -1,7 +1,7 @@
 #include "map.h"
 #include <GL/glut.h>
 
-int mapArray[]=
+int Map::mapArray[]=
 {
 	1,1,1,1,1,1,1,1,
 	1,0,0,0,0,0,0,1,

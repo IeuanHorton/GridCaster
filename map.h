@@ -12,5 +12,6 @@ class Map
 
 	void draw2DMap();
 
+	static int mapArray[];
 };
 #endif
