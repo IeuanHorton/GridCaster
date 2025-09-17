@@ -7,10 +7,13 @@
 #include "keybindings.h"
 #include "settings.h"
 #include "map.h"
+#include "ray.h"
 
 #define PI 3.1415926535
 
 Map map;
+
+int NUMOFRAYS = 1;
 
 void drawPlayer()
 {
@@ -25,6 +28,12 @@ void drawPlayer()
 	glVertex2i(pX,pY);
 	glVertex2i(pX+pDeltaX*5,pY+pDeltaY*5);
 	glEnd();
+}
+
+void drawRays()
+{
+	rayAngle = pAngle;
+	for(int ray = 0; ray < NUMOFRAYS; ray++;
 }
 
 void display()
@@ -77,6 +86,8 @@ void init()
 
 	pDeltaX=cos(pAngle)*5;
 	pDeltaY=sin(pAngle)*5;
+
+	rayAngle = pAngle;
 }
 
 int main(int argc, char* argv[])
