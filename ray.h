@@ -1,1 +1,7 @@
-float rayX, rayY, rayAngle;
+class Ray
+{
+
+	public:
+	float rayX, rayY, rayAngle;
+
+};
