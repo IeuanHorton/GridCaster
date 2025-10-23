@@ -2,6 +2,8 @@ class Ray
 {
 
 	public:
-	float rayX, rayY, rayAngle;
+	float rayX, rayY;
+
+	double rayAngle;
 
 };

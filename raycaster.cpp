@@ -3,6 +3,8 @@
 #include <GL/glut.h>
 #include <math.h>
 
+#include <iostream> 
+
 #include "player.h"
 #include "keybindings.h"
 #include "settings.h"
@@ -13,6 +15,7 @@
 
 Map map;
 Ray ray;
+Player player;
 
 int NUMOFRAYS = 1;
 
@@ -21,14 +24,19 @@ void drawPlayer()
 	glColor3f(1,1,0); //Yellow
 	glPointSize(8);
 	glBegin(GL_POINTS);
-	glVertex2i(playerX,playerY);
+	glVertex2i(player.X,player.Y);
 	glEnd();
 
 	glLineWidth(3);
 	glBegin(GL_LINES);
-	glVertex2i(playerX,playerY);
-	glVertex2i(playerX+playerDeltaX*5,playerY+playerDeltaY*5);
+	glVertex2i(player.X,player.Y);
+	glVertex2i(player.X+player.deltaX*5,player.Y+player.deltaY*5);
 	glEnd();
+}
+
+void printText(std::string text)
+{
+	std::cout << text; 
 }
 
 void horizontalLineCheck()
@@ -41,22 +49,25 @@ void horizontalLineCheck()
 	float aTan = -1/tan(ray.rayAngle);
 	if(ray.rayAngle>PI)//Looking up
 	{
-		ray.rayY = (((int)playerY>>6)<<6)-0.0001;
-		ray.rayX = (playerY-ray.rayY) * aTan+playerX;
+		printText("looking up");
+		ray.rayY = (((int)player.Y>>6)<<6)-0.0001;
+		ray.rayX = (player.Y-ray.rayY) * aTan+player.X;
 		yOffset = -64;
 		xOffset = -yOffset * aTan;
 	}
 	if(ray.rayAngle<PI)//Looking down
 	{
-		ray.rayY = (((int)playerY>>6)<<6)+64;
-		ray.rayX = (playerY - ray.rayY) * aTan+playerX;
+		printText("looking down");
+		ray.rayY = (((int)player.Y>>6)<<6)+64;
+		ray.rayX = (player.Y - ray.rayY) * aTan+player.X;
 		yOffset = 64;
 		xOffset = -yOffset * aTan;
 	}
 	if(ray.rayAngle == 0 || ray.rayAngle == PI)
 	{
-		ray.rayX = playerX;
-		ray.rayY = playerY;
+		printText("looking flat");
+		ray.rayX = player.X;
+		ray.rayY = player.Y;
 		depthOfField = 8;
 	}
 	while(depthOfField<8)
@@ -79,7 +90,7 @@ void horizontalLineCheck()
 		glColor3f(0,1,0);
 		glLineWidth(1);
 		glBegin(GL_LINES);
-		glVertex2i(playerX,playerY);
+		glVertex2i(player.X,player.Y);
 		glVertex2i(ray.rayX,ray.rayY);
 		glEnd();
 }
@@ -88,7 +99,7 @@ void horizontalLineCheck()
 void drawRays()
 {
 	
-	ray.rayAngle = playerAngle;
+	ray.rayAngle = player.angle;
 	for(int theray = 0; theray < NUMOFRAYS; theray++)
 	{
 		horizontalLineCheck();
@@ -108,31 +119,31 @@ void buttons(unsigned char key, int x, int y)
 {
 	if(key == LEFT)
 	{
-		playerAngle -= TURNSPEED;
+		player.angle -= player.TURNSPEED;
 	}
 	
 	if(key == RIGHT)
 	{
-		playerAngle += TURNSPEED;
+		player.angle += player.TURNSPEED;
 	}
 
-	if(playerAngle > 2*PI || playerAngle < 0)//Resets the angle is it goes over 360 or under 0
+	if(player.angle > 2*PI || player.angle < 0)//Resets the angle is it goes over 360 or under 0
 	{
-		playerAngle+=2*PI;
+		player.angle+=2*PI;
 	}
 
-	playerDeltaX=cos(playerAngle)*5;
-	playerDeltaY=sin(playerAngle)*5;
+	player.deltaX=cos(player.angle)*5;
+	player.deltaY=sin(player.angle)*5;
 
 	if(key == UP)
 	{
-		playerX += playerDeltaX;
-		playerY += playerDeltaY;
+		player.X += player.deltaX;
+		player.Y += player.deltaY;
 	}
 	if(key == DOWN)
 	{
-		playerX -= playerDeltaX;
-		playerY -= playerDeltaY;
+		player.X -= player.deltaX;
+		player.Y -= player.deltaY;
 	}
 
 	glutPostRedisplay();
@@ -143,11 +154,11 @@ void init()
 	glClearColor(0.3,0.3,0.3,0);
 	gluOrtho2D(0,WINDOWWIDTH,WINDOWHEIGHT,0);
 
-	playerDeltaX=cos(playerAngle)*5;
-	playerDeltaY=sin(playerAngle)*5;
+	player.deltaX=cos(player.angle)*5;
+	player.deltaY=sin(player.angle)*5;
 
-	ray.rayAngle = playerAngle;
-	playerX=300; playerY=300;
+	ray.rayAngle = player.angle;
+	player.X=300; player.Y=300;
 }
 
 int main(int argc, char* argv[])
