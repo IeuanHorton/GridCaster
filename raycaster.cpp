@@ -127,9 +127,13 @@ void buttons(unsigned char key, int x, int y)
 		player.angle += player.TURNSPEED;
 	}
 
-	if(player.angle > 2*PI || player.angle < 0)//Resets the angle is it goes over 360 or under 0
+	if(player.angle > 2*PI)//Resets the angle is it goes over 360 or under 0
 	{
-		player.angle+=2*PI;
+		player.angle-=(2*PI);
+	}
+	if(player.angle < 0)
+	{
+		player.angle+=(2*PI);
 	}
 
 	player.deltaX=cos(player.angle)*5;
