@@ -42,11 +42,11 @@ void printText(std::string text)
 void horizontalLineCheck()
 {
 	int depthOfField, mapX, mapY, mapPosition;
-	float yOffset, xOffset;
+	float yOffset, xOffset, aTan;
 
 
 	depthOfField = 0;
-	float aTan = -1/tan(ray.rayAngle);
+        aTan = -1/tan(ray.rayAngle);
 	if(ray.rayAngle>PI)//Looking up
 	{
 		printText("looking up");
@@ -136,8 +136,11 @@ void buttons(unsigned char key, int x, int y)
 		player.angle+=(2*PI);
 	}
 
+	if(player.angle != 0)
+	{
 	player.deltaX=cos(player.angle)*5;
 	player.deltaY=sin(player.angle)*5;
+	}
 
 	if(key == UP)
 	{
@@ -150,6 +153,8 @@ void buttons(unsigned char key, int x, int y)
 		player.Y -= player.deltaY;
 	}
 
+	ray.rayAngle = player.angle;
+
 	glutPostRedisplay();
 }
 
@@ -157,6 +162,8 @@ void init()
 {
 	glClearColor(0.3,0.3,0.3,0);
 	gluOrtho2D(0,WINDOWWIDTH,WINDOWHEIGHT,0);
+
+	player.angle = PI + (PI/2);
 
 	player.deltaX=cos(player.angle)*5;
 	player.deltaY=sin(player.angle)*5;
