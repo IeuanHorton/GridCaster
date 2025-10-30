@@ -46,7 +46,7 @@ void horizontalLineCheck()
 
 
 	depthOfField = 0;
-        aTan = -1/tan(ray.rayAngle);
+        aTan = -1/tan(ray.rayAngle);//THIS IS BAD. WILL THROW A SEGFAULT IF RAYANGLE IS 0. EASIER TO LEAVE IT AS IT DOESN'T SEEM TO HAPPEN IF YOU DON'T INIT THE RAYANGLE AT 0.
 	if(ray.rayAngle>PI)//Looking up
 	{
 		printText("looking up");
