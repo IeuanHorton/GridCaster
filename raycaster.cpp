@@ -117,6 +117,8 @@ void display()
 
 void buttons(unsigned char key, int x, int y)
 {
+	key = tolower(key);
+
 	if(key == LEFT)
 	{
 		player.angle -= player.TURNSPEED;
