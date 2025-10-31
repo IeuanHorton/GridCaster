@@ -46,7 +46,7 @@ void horizontalLineCheck()
 
 
 	depthOfField = 0;
-        aTan = -1/tan(ray.rayAngle);//THIS IS BAD. WILL THROW A SEGFAULT IF RAYANGLE IS 0. EASIER TO LEAVE IT AS IT DOESN'T SEEM TO HAPPEN IF YOU DON'T INIT THE RAYANGLE AT 0.
+   aTan = -1/tan(ray.rayAngle);//THIS IS BAD. WILL THROW A SEGFAULT IF RAYANGLE IS 0. EASIER TO LEAVE IT AS IT DOESN'T SEEM TO HAPPEN IF YOU DON'T INIT THE RAYANGLE AT 0.
 	if(ray.rayAngle>PI)//Looking up
 	{
 		printText("looking up");
@@ -122,26 +122,23 @@ void buttons(unsigned char key, int x, int y)
 	if(key == LEFT)
 	{
 		player.angle -= player.TURNSPEED;
+		if(player.angle < 0)
+		{
+			player.angle+=(2*PI);
+		}
+		player.deltaX=cos(player.angle)*5;
+		player.deltaY=sin(player.angle)*5;
 	}
 	
 	if(key == RIGHT)
 	{
 		player.angle += player.TURNSPEED;
-	}
-
-	if(player.angle > 2*PI)//Resets the angle is it goes over 360 or under 0
-	{
-		player.angle-=(2*PI);
-	}
-	if(player.angle < 0)
-	{
-		player.angle+=(2*PI);
-	}
-
-	if(player.angle != 0)
-	{
-	player.deltaX=cos(player.angle)*5;
-	player.deltaY=sin(player.angle)*5;
+		if(player.angle > 2*PI)//Resets the angle is it goes over 360 or under 0
+		{
+			player.angle-=(2*PI);
+		}
+		player.deltaX=cos(player.angle)*5;
+		player.deltaY=sin(player.angle)*5;
 	}
 
 	if(key == UP)
@@ -165,7 +162,7 @@ void init()
 	glClearColor(0.3,0.3,0.3,0);
 	gluOrtho2D(0,WINDOWWIDTH,WINDOWHEIGHT,0);
 
-	player.angle = PI + (PI/2);
+   player.angle = PI + (PI/2);//Throws segfault if not done
 
 	player.deltaX=cos(player.angle)*5;
 	player.deltaY=sin(player.angle)*5;
