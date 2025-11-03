@@ -50,7 +50,6 @@ void horizontalLineCheck()
    aTan = -1/tan(ray.rayAngle);//THIS IS BAD. WILL THROW A SEGFAULT IF RAYANGLE IS 0. EASIER TO LEAVE IT AS IT DOESN'T SEEM TO HAPPEN IF YOU DON'T INIT THE RAYANGLE AT 0.
 	if(ray.rayAngle>PI)//Looking up
 	{
-		printText("looking up");
 		ray.rayY = (((int)player.Y>>6)<<6)-0.0001;
 		ray.rayX = (player.Y-ray.rayY) * aTan+player.X;
 		yOffset = -64;
@@ -58,7 +57,6 @@ void horizontalLineCheck()
 	}
 	if(ray.rayAngle<PI)//Looking down
 	{
-		printText("looking down");
 		ray.rayY = (((int)player.Y>>6)<<6)+64;
 		ray.rayX = (player.Y - ray.rayY) * aTan+player.X;
 		yOffset = 64;
@@ -66,7 +64,6 @@ void horizontalLineCheck()
 	}
 	if(ray.rayAngle == 0 || ray.rayAngle == PI)
 	{
-		printText("looking flat");
 		ray.rayX = player.X;
 		ray.rayY = player.Y;
 		depthOfField = 8;
