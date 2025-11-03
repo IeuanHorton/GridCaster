@@ -41,9 +41,30 @@ void printText(std::string text)
 	std::cout << text; 
 }
 
+void depthOfFieldCheck(int depthOfField, float xOffset, float yOffset)
+{
+	int mapX, mapY, mapPosition;
+
+	while(depthOfField<8)
+	{
+		mapX = (int)(ray.rayX)>>6;
+		mapY = (int)(ray.rayY)>>6;
+		mapPosition = mapY * map.mapXLimit + mapX;
+		if(mapPosition < map.mapXLimit*map.mapYLimit && map.mapArray[mapPosition]==1)//Hit Wall
+		{
+		       depthOfField = 8;
+		}
+		else //No Wall, Checks the next appearing wall
+		{
+			ray.rayX += xOffset;
+			ray.rayY += yOffset;
+			depthOfField++;
+		}
+	}
+}
 void horizontalLineCheck()
 {
-	int depthOfField, mapX, mapY, mapPosition;
+	int depthOfField;
 	float yOffset, xOffset, aTan;
 
 	depthOfField = 0;
@@ -68,34 +89,19 @@ void horizontalLineCheck()
 		ray.rayY = player.Y;
 		depthOfField = 8;
 	}
-	while(depthOfField<8)
-	{
-		mapX = (int)(ray.rayX)>>6;
-		mapY = (int)(ray.rayY)>>6;
-		mapPosition = mapY * map.mapXLimit + mapX;
-		if(mapPosition < map.mapXLimit*map.mapYLimit && map.mapArray[mapPosition]==1)//Hit Wall
-		{
-		       depthOfField = 8;
-		}
-		else //No Wall, Checks the next appearing horizontal line
-		{
-			ray.rayX += xOffset;
-			ray.rayY += yOffset;
-			depthOfField++;
-		}
-	}
+	depthOfFieldCheck(depthOfField, xOffset, yOffset);
 
-		glColor3f(0,1,0);
-		glLineWidth(5);
-		glBegin(GL_LINES);
-		glVertex2i(player.X,player.Y);
-		glVertex2i(ray.rayX,ray.rayY);
-		glEnd();
+	glColor3f(0,1,0);
+	glLineWidth(5);
+	glBegin(GL_LINES);
+	glVertex2i(player.X,player.Y);
+	glVertex2i(ray.rayX,ray.rayY);
+	glEnd();
 }
 
 void verticalLineCheck()
 {
-	int depthOfField, mapX, mapY, mapPosition;
+	int depthOfField;
 	float yOffset, xOffset, nTan;
 
 	depthOfField = 0;
@@ -120,30 +126,17 @@ void verticalLineCheck()
 		ray.rayY = player.Y;
 		depthOfField = 8;
 	}
-	while(depthOfField<8)
-	{
-		mapX = (int)(ray.rayX)>>6;
-		mapY = (int)(ray.rayY)>>6;
-		mapPosition = mapY * map.mapXLimit + mapX;
-		if(mapPosition < map.mapXLimit*map.mapYLimit && map.mapArray[mapPosition]==1)//Hit Wall
-		{
-		       depthOfField = 8;
-		}
-		else //No Wall, Checks the next appearing horizontal line
-		{
-			ray.rayX += xOffset;
-			ray.rayY += yOffset;
-			depthOfField++;
-		}
-	}
+	
+	depthOfFieldCheck(depthOfField, xOffset, yOffset);
 
-		glColor3f(1,0,0);
-		glLineWidth(2);
-		glBegin(GL_LINES);
-		glVertex2i(player.X,player.Y);
-		glVertex2i(ray.rayX,ray.rayY);
-		glEnd();
+	glColor3f(1,0,0);
+	glLineWidth(2);
+	glBegin(GL_LINES);
+	glVertex2i(player.X,player.Y);
+	glVertex2i(ray.rayX,ray.rayY);
+	glEnd();
 }
+
 
 void drawRays()
 {	
