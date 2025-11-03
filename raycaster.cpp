@@ -12,12 +12,14 @@
 #include "ray.h"
 
 #define PI 3.1415926535
+#define P2 PI/2
+#define P3 3*PI/2
 
 Map map;
 Ray ray;
 Player player;
 
-int NUMOFRAYS = 1;
+int NUMOFRAYS = 10;
 
 void drawPlayer()
 {
@@ -88,12 +90,66 @@ void horizontalLineCheck()
 	}
 
 		glColor3f(0,1,0);
-		glLineWidth(1);
+		glLineWidth(5);
 		glBegin(GL_LINES);
 		glVertex2i(player.X,player.Y);
 		glVertex2i(ray.rayX,ray.rayY);
 		glEnd();
 }
+
+void verticalLineCheck()
+{
+	int depthOfField, mapX, mapY, mapPosition;
+	float yOffset, xOffset, nTan;
+
+
+	depthOfField = 0;
+   nTan = -tan(ray.rayAngle);//THIS IS BAD. WILL THROW A SEGFAULT IF RAYANGLE IS 0. EASIER TO LEAVE IT AS IT DOESN'T SEEM TO HAPPEN IF YOU DON'T INIT THE RAYANGLE AT 0.
+	if(ray.rayAngle>P2 && ray.rayAngle<P3)//Looking left
+	{
+		ray.rayX = (((int)player.X>>6)<<6)-0.0001;
+		ray.rayY = (player.X-ray.rayX) * nTan+player.Y;
+		xOffset = -64;
+		yOffset = -xOffset * nTan;
+	}
+	if(ray.rayAngle<P2 || ray.rayAngle>P3)//Looking right
+	{
+		ray.rayX = (((int)player.X>>6)<<6)+64;
+		ray.rayY = (player.X - ray.rayX) * nTan+player.Y;
+		xOffset = 64;
+		yOffset = -xOffset * nTan;
+	}
+	if(ray.rayAngle == 0 || ray.rayAngle == PI)
+	{
+		ray.rayX = player.X;
+		ray.rayY = player.Y;
+		depthOfField = 8;
+	}
+	while(depthOfField<8)
+	{
+		mapX = (int)(ray.rayX)>>6;
+		mapY = (int)(ray.rayY)>>6;
+		mapPosition = mapY * map.mapXLimit + mapX;
+		if(mapPosition < map.mapXLimit*map.mapYLimit && map.mapArray[mapPosition]==1)//Hit Wall
+		{
+		       depthOfField = 8;
+		}
+		else //No Wall, Checks the next appearing horizontal line
+		{
+			ray.rayX += xOffset;
+			ray.rayY += yOffset;
+			depthOfField++;
+		}
+	}
+
+		glColor3f(1,0,0);
+		glLineWidth(2);
+		glBegin(GL_LINES);
+		glVertex2i(player.X,player.Y);
+		glVertex2i(ray.rayX,ray.rayY);
+		glEnd();
+}
+
 
 
 void drawRays()
@@ -103,7 +159,7 @@ void drawRays()
 	for(int theray = 0; theray < NUMOFRAYS; theray++)
 	{
 		horizontalLineCheck();
-
+		verticalLineCheck();
 	}
 }
 void display()
