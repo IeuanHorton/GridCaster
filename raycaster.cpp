@@ -19,7 +19,7 @@ Map map;
 Ray ray;
 Player player;
 
-int NUMOFRAYS = 10;
+int NUMOFRAYS = 1;
 
 void drawPlayer()
 {
@@ -45,7 +45,6 @@ void horizontalLineCheck()
 {
 	int depthOfField, mapX, mapY, mapPosition;
 	float yOffset, xOffset, aTan;
-
 
 	depthOfField = 0;
    aTan = -1/tan(ray.rayAngle);//THIS IS BAD. WILL THROW A SEGFAULT IF RAYANGLE IS 0. EASIER TO LEAVE IT AS IT DOESN'T SEEM TO HAPPEN IF YOU DON'T INIT THE RAYANGLE AT 0.
@@ -102,9 +101,8 @@ void verticalLineCheck()
 	int depthOfField, mapX, mapY, mapPosition;
 	float yOffset, xOffset, nTan;
 
-
 	depthOfField = 0;
-   nTan = -tan(ray.rayAngle);//THIS IS BAD. WILL THROW A SEGFAULT IF RAYANGLE IS 0. EASIER TO LEAVE IT AS IT DOESN'T SEEM TO HAPPEN IF YOU DON'T INIT THE RAYANGLE AT 0.
+   nTan = -tan(ray.rayAngle);
 	if(ray.rayAngle>P2 && ray.rayAngle<P3)//Looking left
 	{
 		ray.rayX = (((int)player.X>>6)<<6)-0.0001;
@@ -150,11 +148,8 @@ void verticalLineCheck()
 		glEnd();
 }
 
-
-
 void drawRays()
-{
-	
+{	
 	ray.rayAngle = player.angle;
 	for(int theray = 0; theray < NUMOFRAYS; theray++)
 	{
@@ -235,6 +230,6 @@ int main(int argc, char* argv[])
 	glutCreateWindow("RAYCASTERTEST");
 	init();
 	glutDisplayFunc(display);
-        glutKeyboardFunc(buttons);
+   glutKeyboardFunc(buttons);
 	glutMainLoop();
 }
