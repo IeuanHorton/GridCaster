@@ -41,6 +41,11 @@ void printText(std::string text)
 	std::cout << text; 
 }
 
+float distanceOfRay(float ax, float ay, float bx, float by, float angle)
+{
+	return (sqrt((bx-ax)*(bx-ax) + (by-ay) * (by-ay)));//Pythagorean Theorem
+}
+
 void depthOfFieldCheck(int depthOfField, float xOffset, float yOffset)
 {
 	int mapX, mapY, mapPosition;
@@ -50,7 +55,7 @@ void depthOfFieldCheck(int depthOfField, float xOffset, float yOffset)
 		mapX = (int)(ray.rayX)>>6;
 		mapY = (int)(ray.rayY)>>6;
 		mapPosition = mapY * map.mapXLimit + mapX;
-		if(mapPosition < map.mapXLimit*map.mapYLimit && map.mapArray[mapPosition]==1)//Hit Wall
+		if(mapPosition>0 && mapPosition < map.mapXLimit*map.mapYLimit && map.mapArray[mapPosition]==1)//Hit Wall
 		{
 		       depthOfField = 8;
 		}
