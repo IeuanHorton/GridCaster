@@ -16,7 +16,6 @@
 #define P3 3*PI/2
 
 Map map;
-Ray ray;
 Player player;
 
 int NUMOFRAYS = 1;
@@ -46,14 +45,14 @@ float distanceOfRay(float ax, float ay, float bx, float by, float angle)
 	return (sqrt((bx-ax)*(bx-ax) + (by-ay) * (by-ay)));//Pythagorean Theorem
 }
 
-void depthOfFieldCheck(int depthOfField, float xOffset, float yOffset)
+void depthOfFieldCheck(int depthOfField, float xOffset, float yOffset, Ray* ray)
 {
 	int mapX, mapY, mapPosition;
 
 	while(depthOfField<8)
 	{
-		mapX = (int)(ray.rayX)>>6;
-		mapY = (int)(ray.rayY)>>6;
+		mapX = (int)(ray->rayX)>>6;
+		mapY = (int)(ray->rayY)>>6;
 		mapPosition = mapY * map.mapXLimit + mapX;
 		if(mapPosition>0 && mapPosition < map.mapXLimit*map.mapYLimit && map.mapArray[mapPosition]==1)//Hit Wall
 		{
@@ -61,95 +60,100 @@ void depthOfFieldCheck(int depthOfField, float xOffset, float yOffset)
 		}
 		else //No Wall, Checks the next appearing wall
 		{
-			ray.rayX += xOffset;
-			ray.rayY += yOffset;
+			ray->rayX += xOffset;
+			ray->rayY += yOffset;
 			depthOfField++;
 		}
 	}
 }
-void horizontalLineCheck()
+void horizontalLineCheck(Ray* ray)
 {
 	int depthOfField;
+   float horizontalDistance = 100000, horizontalX = player.X, horizontalY = player.Y;
 	float yOffset, xOffset, aTan;
 
 	depthOfField = 0;
-   aTan = -1/tan(ray.rayAngle);//THIS IS BAD. WILL THROW A SEGFAULT IF RAYANGLE IS 0. EASIER TO LEAVE IT AS IT DOESN'T SEEM TO HAPPEN IF YOU DON'T INIT THE RAYANGLE AT 0.
-	if(ray.rayAngle>PI)//Looking up
+   aTan = -1/tan(ray->rayAngle);//THIS IS BAD. WILL THROW A SEGFAULT IF RAYANGLE IS 0. EASIER TO LEAVE IT AS IT DOESN'T SEEM TO HAPPEN IF YOU DON'T INIT THE RAYANGLE AT 0.
+	if(ray->rayAngle>PI)//Looking up
 	{
-		ray.rayY = (((int)player.Y>>6)<<6)-0.0001;
-		ray.rayX = (player.Y-ray.rayY) * aTan+player.X;
+		ray->rayY = (((int)player.Y>>6)<<6)-0.0001;
+		ray->rayX = (player.Y-ray->rayY) * aTan+player.X;
 		yOffset = -64;
 		xOffset = -yOffset * aTan;
 	}
-	if(ray.rayAngle<PI)//Looking down
+	if(ray->rayAngle<PI)//Looking down
 	{
-		ray.rayY = (((int)player.Y>>6)<<6)+64;
-		ray.rayX = (player.Y - ray.rayY) * aTan+player.X;
+		ray->rayY = (((int)player.Y>>6)<<6)+64;
+		ray->rayX = (player.Y - ray->rayY) * aTan+player.X;
 		yOffset = 64;
 		xOffset = -yOffset * aTan;
 	}
-	if(ray.rayAngle == 0 || ray.rayAngle == PI)
+	if(ray->rayAngle == 0 || ray->rayAngle == PI)
 	{
-		ray.rayX = player.X;
-		ray.rayY = player.Y;
+		ray->rayX = player.X;
+		ray->rayY = player.Y;
 		depthOfField = 8;
 	}
-	depthOfFieldCheck(depthOfField, xOffset, yOffset);
+	depthOfFieldCheck(depthOfField, xOffset, yOffset, ray);
 
 	glColor3f(0,1,0);
 	glLineWidth(5);
 	glBegin(GL_LINES);
 	glVertex2i(player.X,player.Y);
-	glVertex2i(ray.rayX,ray.rayY);
+	glVertex2i(ray->rayX,ray->rayY);
 	glEnd();
 }
 
-void verticalLineCheck()
+void verticalLineCheck(Ray* ray)
 {
 	int depthOfField;
+	float verticalDistance = 10000, verticalX = player.X, verticalY = player.Y;
 	float yOffset, xOffset, nTan;
 
 	depthOfField = 0;
-   nTan = -tan(ray.rayAngle);
-	if(ray.rayAngle>P2 && ray.rayAngle<P3)//Looking left
+   nTan = -tan(ray->rayAngle);
+	if(ray->rayAngle>P2 && ray->rayAngle<P3)//Looking left
 	{
-		ray.rayX = (((int)player.X>>6)<<6)-0.0001;
-		ray.rayY = (player.X-ray.rayX) * nTan+player.Y;
+		ray->rayX = (((int)player.X>>6)<<6)-0.0001;
+		ray->rayY = (player.X-ray->rayX) * nTan+player.Y;
 		xOffset = -64;
 		yOffset = -xOffset * nTan;
 	}
-	if(ray.rayAngle<P2 || ray.rayAngle>P3)//Looking right
+	if(ray->rayAngle<P2 || ray->rayAngle>P3)//Looking right
 	{
-		ray.rayX = (((int)player.X>>6)<<6)+64;
-		ray.rayY = (player.X - ray.rayX) * nTan+player.Y;
+		ray->rayX = (((int)player.X>>6)<<6)+64;
+		ray->rayY = (player.X - ray->rayX) * nTan+player.Y;
 		xOffset = 64;
 		yOffset = -xOffset * nTan;
 	}
-	if(ray.rayAngle == 0 || ray.rayAngle == PI)
+	if(ray->rayAngle == 0 || ray->rayAngle == PI)
 	{
-		ray.rayX = player.X;
-		ray.rayY = player.Y;
+		ray->rayX = player.X;
+		ray->rayY = player.Y;
 		depthOfField = 8;
 	}
 	
-	depthOfFieldCheck(depthOfField, xOffset, yOffset);
+	depthOfFieldCheck(depthOfField, xOffset, yOffset, ray);
 
 	glColor3f(1,0,0);
 	glLineWidth(2);
 	glBegin(GL_LINES);
 	glVertex2i(player.X,player.Y);
-	glVertex2i(ray.rayX,ray.rayY);
+	glVertex2i(ray->rayX,ray->rayY);
 	glEnd();
 }
 
 
 void drawRays()
-{	
-	ray.rayAngle = player.angle;
+{
+	Ray verticalRay;
+	Ray horizontalRay;	
+	verticalRay.rayAngle = player.angle;
+	horizontalRay.rayAngle = player.angle;
 	for(int theray = 0; theray < NUMOFRAYS; theray++)
 	{
-		horizontalLineCheck();
-		verticalLineCheck();
+		horizontalLineCheck(&horizontalRay);
+		verticalLineCheck(&verticalRay);
 	}
 }
 void display()
@@ -198,7 +202,6 @@ void buttons(unsigned char key, int x, int y)
 		player.Y -= player.deltaY;
 	}
 
-	ray.rayAngle = player.angle;
 
 	glutPostRedisplay();
 }
@@ -208,12 +211,11 @@ void init()
 	glClearColor(0.3,0.3,0.3,0);
 	gluOrtho2D(0,WINDOWWIDTH,WINDOWHEIGHT,0);
 
-   player.angle = PI + (PI/2);//Throws segfault if not done
+   player.angle = PI + (PI/4);//Throws segfault if not done
 
 	player.deltaX=cos(player.angle)*5;
 	player.deltaY=sin(player.angle)*5;
 
-	ray.rayAngle = player.angle;
 	player.X=300; player.Y=300;
 }
 
