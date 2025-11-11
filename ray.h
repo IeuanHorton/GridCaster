@@ -1,4 +1,4 @@
-class Ray
+struct Ray
 {
 
 	public:
