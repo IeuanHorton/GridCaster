@@ -14,6 +14,7 @@
 #define PI 3.1415926535
 #define P2 PI/2
 #define P3 3*PI/2
+#define DEGREERADIAN 0.0174533 //1 degree in radians
 
 Map map;
 Player player;
@@ -45,7 +46,7 @@ float distanceOfRay(float ax, float ay, float bx, float by, float angle)
 	return (sqrt((bx-ax)*(bx-ax) + (by-ay) * (by-ay)));//Pythagorean Theorem
 }
 
-void depthOfFieldCheck(int depthOfField, float xOffset, float yOffset, Ray* ray)
+float depthOfFieldCheck(int depthOfField, float xOffset, float yOffset, Ray* ray)
 {
 	int mapX, mapY, mapPosition;
 
@@ -56,7 +57,7 @@ void depthOfFieldCheck(int depthOfField, float xOffset, float yOffset, Ray* ray)
 		mapPosition = mapY * map.mapXLimit + mapX;
 		if(mapPosition>0 && mapPosition < map.mapXLimit*map.mapYLimit && map.mapArray[mapPosition]==1)//Hit Wall
 		{
-		       depthOfField = 8;
+			return distanceOfRay(player.X, player.Y, ray->rayX, ray->rayY, ray->rayAngle);			
 		}
 		else //No Wall, Checks the next appearing wall
 		{
@@ -65,11 +66,11 @@ void depthOfFieldCheck(int depthOfField, float xOffset, float yOffset, Ray* ray)
 			depthOfField++;
 		}
 	}
+	return -1;
 }
 void horizontalLineCheck(Ray* ray)
 {
 	int depthOfField;
-   float horizontalDistance = 100000, horizontalX = player.X, horizontalY = player.Y;
 	float yOffset, xOffset, aTan;
 
 	depthOfField = 0;
@@ -94,20 +95,14 @@ void horizontalLineCheck(Ray* ray)
 		ray->rayY = player.Y;
 		depthOfField = 8;
 	}
-	depthOfFieldCheck(depthOfField, xOffset, yOffset, ray);
-
-	glColor3f(0,1,0);
-	glLineWidth(5);
-	glBegin(GL_LINES);
-	glVertex2i(player.X,player.Y);
-	glVertex2i(ray->rayX,ray->rayY);
-	glEnd();
+	ray->horizontalX = ray->rayX;
+	ray->horizontalY = ray->rayY;
+	ray->horizontalDistance = depthOfFieldCheck(depthOfField, xOffset, yOffset, ray);
 }
 
 void verticalLineCheck(Ray* ray)
 {
 	int depthOfField;
-	float verticalDistance = 10000, verticalX = player.X, verticalY = player.Y;
 	float yOffset, xOffset, nTan;
 
 	depthOfField = 0;
@@ -132,28 +127,40 @@ void verticalLineCheck(Ray* ray)
 		ray->rayY = player.Y;
 		depthOfField = 8;
 	}
-	
-	depthOfFieldCheck(depthOfField, xOffset, yOffset, ray);
+	ray->verticalX = ray->rayX;
+	ray->verticalY = ray->rayY;
+	ray->verticalDistance = depthOfFieldCheck(depthOfField, xOffset, yOffset, ray);
 
-	glColor3f(1,0,0);
-	glLineWidth(2);
-	glBegin(GL_LINES);
-	glVertex2i(player.X,player.Y);
-	glVertex2i(ray->rayX,ray->rayY);
-	glEnd();
 }
 
 
 void drawRays()
 {
-	Ray verticalRay;
-	Ray horizontalRay;	
-	verticalRay.rayAngle = player.angle;
-	horizontalRay.rayAngle = player.angle;
+	Ray ray;	
+	ray.rayAngle = player.angle;// - DEGREERADIAN*30;
+
 	for(int theray = 0; theray < NUMOFRAYS; theray++)
 	{
-		horizontalLineCheck(&horizontalRay);
-		verticalLineCheck(&verticalRay);
+		horizontalLineCheck(&ray);
+		verticalLineCheck(&ray);
+
+		glColor3f(1,0,0);
+		glLineWidth(2);
+		glBegin(GL_LINES);
+		glVertex2i(player.X,player.Y);
+		if(ray.horizontalDistance <= ray.verticalDistance)
+		{
+			ray.rayX = ray.horizontalX;
+			ray.rayY = ray.horizontalY;
+		}
+		else
+		{
+			ray.rayX = ray.verticalX;
+			ray.rayY = ray.verticalY;
+		}
+
+		glVertex2i(ray.rayX,ray.rayY);
+		glEnd();
 	}
 }
 void display()
