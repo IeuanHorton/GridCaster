@@ -20,7 +20,7 @@
 Map map;
 Player player;
 
-int NUMOFRAYS = 1;
+int NUMOFRAYS = 90;
 
 void drawPlayer()
 {
@@ -137,7 +137,7 @@ void verticalLineCheck(Ray* ray)
 void drawRays()
 {
 	Ray ray;	
-	ray.rayAngle = player.angle;// - DEGREERADIAN*30;
+	ray.rayAngle = player.angle - DEGREERADIAN*30;
 
 	for(int theray = 0; theray < NUMOFRAYS; theray++)
 	{
@@ -161,6 +161,15 @@ void drawRays()
 
 		glVertex2i(ray.rayX,ray.rayY);
 		glEnd();
+		ray.rayAngle+=DEGREERADIAN;
+		if(ray.rayAngle < 0)
+		{
+			ray.rayAngle += 2*PI;
+		}
+		if(ray.rayAngle > 2*PI)
+		{
+			ray.rayAngle -=2*PI;
+		}
 	}
 }
 void display()
