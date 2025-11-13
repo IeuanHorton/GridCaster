@@ -10,6 +10,7 @@
 #include "settings.h"
 #include "map.h"
 #include "ray.h"
+#include "raycaster.h"
 
 #define PI 3.1415926535
 #define P2 PI/2
@@ -66,7 +67,7 @@ float depthOfFieldCheck(int depthOfField, float xOffset, float yOffset, Ray* ray
 			depthOfField++;
 		}
 	}
-	return -1;
+	return 900000;
 }
 void horizontalLineCheck(Ray* ray)
 {
@@ -75,14 +76,14 @@ void horizontalLineCheck(Ray* ray)
 
 	depthOfField = 0;
    aTan = -1/tan(ray->rayAngle);//THIS IS BAD. WILL THROW A SEGFAULT IF RAYANGLE IS 0. EASIER TO LEAVE IT AS IT DOESN'T SEEM TO HAPPEN IF YOU DON'T INIT THE RAYANGLE AT 0.
-	if(ray->rayAngle>PI)//Looking up
+	if(LookingUp(ray))
 	{
 		ray->rayY = (((int)player.Y>>6)<<6)-0.0001;
 		ray->rayX = (player.Y-ray->rayY) * aTan+player.X;
 		yOffset = -64;
 		xOffset = -yOffset * aTan;
 	}
-	if(ray->rayAngle<PI)//Looking down
+	if(LookingDown(ray))
 	{
 		ray->rayY = (((int)player.Y>>6)<<6)+64;
 		ray->rayX = (player.Y - ray->rayY) * aTan+player.X;
@@ -95,9 +96,9 @@ void horizontalLineCheck(Ray* ray)
 		ray->rayY = player.Y;
 		depthOfField = 8;
 	}
+	ray->horizontalDistance = depthOfFieldCheck(depthOfField, xOffset, yOffset, ray);
 	ray->horizontalX = ray->rayX;
 	ray->horizontalY = ray->rayY;
-	ray->horizontalDistance = depthOfFieldCheck(depthOfField, xOffset, yOffset, ray);
 }
 
 void verticalLineCheck(Ray* ray)
@@ -107,14 +108,14 @@ void verticalLineCheck(Ray* ray)
 
 	depthOfField = 0;
    nTan = -tan(ray->rayAngle);
-	if(ray->rayAngle>P2 && ray->rayAngle<P3)//Looking left
+	if(LookingLeft(ray))
 	{
 		ray->rayX = (((int)player.X>>6)<<6)-0.0001;
 		ray->rayY = (player.X-ray->rayX) * nTan+player.Y;
 		xOffset = -64;
 		yOffset = -xOffset * nTan;
 	}
-	if(ray->rayAngle<P2 || ray->rayAngle>P3)//Looking right
+	if(LookingRight(ray))
 	{
 		ray->rayX = (((int)player.X>>6)<<6)+64;
 		ray->rayY = (player.X - ray->rayX) * nTan+player.Y;
@@ -127,10 +128,9 @@ void verticalLineCheck(Ray* ray)
 		ray->rayY = player.Y;
 		depthOfField = 8;
 	}
+	ray->verticalDistance = depthOfFieldCheck(depthOfField, xOffset, yOffset, ray);
 	ray->verticalX = ray->rayX;
 	ray->verticalY = ray->rayY;
-	ray->verticalDistance = depthOfFieldCheck(depthOfField, xOffset, yOffset, ray);
-
 }
 
 
@@ -236,4 +236,17 @@ int main(int argc, char* argv[])
 	glutDisplayFunc(display);
    glutKeyboardFunc(buttons);
 	glutMainLoop();
+}
+
+bool LookingUp(Ray* ray){
+	return ray->rayAngle>PI;
+}
+bool LookingDown(Ray* ray){
+	return ray->rayAngle<PI;
+}
+bool LookingRight(Ray* ray){
+	return (ray->rayAngle<P2 || ray->rayAngle>P3);
+}
+bool LookingLeft(Ray* ray){
+	return (ray->rayAngle>P2 && ray->rayAngle<P3);
 }
