@@ -20,7 +20,8 @@
 Map map;
 Player player;
 
-int NUMOFRAYS = 90;
+int NUMOFRAYS = 60;
+int RAYOFFSET = NUMOFRAYS/2;
 
 void drawPlayer()
 {
@@ -137,7 +138,7 @@ void verticalLineCheck(Ray* ray)
 void drawRays()
 {
 	Ray ray;	
-	ray.rayAngle = player.angle - DEGREERADIAN*30;
+	ray.rayAngle = player.angle - DEGREERADIAN*RAYOFFSET;
 
 	for(int theray = 0; theray < NUMOFRAYS; theray++)
 	{
