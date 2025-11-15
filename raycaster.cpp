@@ -154,12 +154,14 @@ void drawRays()
 			ray.rayX = ray.horizontalX;
 			ray.rayY = ray.horizontalY;
 			ray.distance = ray.horizontalDistance;
+			glColor3f(0.7,0,0);
 		}
 		else
 		{
 			ray.rayX = ray.verticalX;
 			ray.rayY = ray.verticalY;
 			ray.distance = ray.verticalDistance;
+			glColor3f(0,0.9,0);
 		}
 
 		glVertex2i(ray.rayX,ray.rayY);
