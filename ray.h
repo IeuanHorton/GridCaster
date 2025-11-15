@@ -11,6 +11,7 @@ struct Ray
 
    float horizontalDistance = 100000;
    float verticalDistance = 100000;
+	float distance = 100000;
 
 	double rayAngle = 0.0;
 

@@ -153,11 +153,13 @@ void drawRays()
 		{
 			ray.rayX = ray.horizontalX;
 			ray.rayY = ray.horizontalY;
+			ray.distance = ray.horizontalDistance;
 		}
 		else
 		{
 			ray.rayX = ray.verticalX;
 			ray.rayY = ray.verticalY;
+			ray.distance = ray.verticalDistance;
 		}
 
 		glVertex2i(ray.rayX,ray.rayY);
@@ -171,6 +173,21 @@ void drawRays()
 		{
 			ray.rayAngle -=2*PI;
 		}
+
+		FixFishEye(&ray);
+		float lineHeight = (map.mapPixelSize*320)/ray.distance;
+		if(lineHeight > 320)
+		{
+			lineHeight = 320;
+		}
+		float lineOffset = 160-lineHeight/2;
+		glLineWidth(8);
+		glBegin(GL_LINES);
+		int screenX = theray*4+530;
+		glVertex2i(screenX, lineOffset);
+		glVertex2i(screenX, lineHeight + lineOffset);
+		glEnd();
+
 	}
 }
 void display()
@@ -246,6 +263,19 @@ int main(int argc, char* argv[])
 	glutDisplayFunc(display);
    glutKeyboardFunc(buttons);
 	glutMainLoop();
+}
+
+void FixFishEye(Ray* ray){
+	float diffrenceAngle = player.angle - ray->rayAngle;
+	if(diffrenceAngle < 0)
+	{
+		diffrenceAngle+=2*PI;
+	}
+	if(diffrenceAngle > 2 * PI)
+	{
+		diffrenceAngle-=2*PI;
+	}
+	ray->distance = ray->distance*cos(diffrenceAngle);
 }
 
 bool LookingUp(Ray* ray){
