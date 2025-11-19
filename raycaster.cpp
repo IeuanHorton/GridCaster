@@ -263,19 +263,25 @@ int main(int argc, char* argv[])
 	glutCreateWindow("RAYCASTERTEST");
 	init();
 	glutDisplayFunc(display);
+	glutReshapeFunc(resize);
    glutKeyboardFunc(buttons);
 	glutMainLoop();
+}
+
+void resize(int w, int h)
+{
+	glutReshapeWindow(WINDOWWIDTH, WINDOWHEIGHT);
 }
 
 void FixFishEye(Ray* ray){
 	float diffrenceAngle = player.angle - ray->rayAngle;
 	if(diffrenceAngle < 0)
 	{
-		diffrenceAngle+=2*PI;
+		diffrenceAngle+= 2*PI;
 	}
 	if(diffrenceAngle > 2 * PI)
 	{
-		diffrenceAngle-=2*PI;
+		diffrenceAngle-= 2*PI;
 	}
 	ray->distance = ray->distance*cos(diffrenceAngle);
 }

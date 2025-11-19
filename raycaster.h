@@ -9,6 +9,7 @@ void drawRays();
 void display();
 void buttons(unsigned char key, int x, int y);
 void init();
+void resize(int w, int h);
 void FixFishEye(Ray* ray);
 bool LookingUp(Ray* ray);
 bool LookingDown(Ray* ray);
